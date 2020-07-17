@@ -1,0 +1,19 @@
+{
+  "name": "slp-validation-oracle",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "@grpc/grpc-js": "^1.1.2",
+    "@grpc/proto-loader": "^0.5.5",
+    "bignumber.js": "^9.0.0",
+    "bitbox-sdk": "^8.11.2",
+    "bitcoincashjs-lib": "^3.3.3",
+    "bitcore-lib-cash": "^8.20.5",
+    "cashscript": "^0.4.4-beta",
+    "dotenv": "^8.2.0",
+    "electrum-cash": "^1.2.0",
+    "grpc": "^1.24.3",
+    "handlebars": "^4.7.6",
+    "slp-mdm": "0.0.6"
+  }
+}

@@ -1,0 +1,98 @@
+syntax = "proto3";
+
+package pb;
+
+// NOTE: This is just a draft of some standardization for an SLP rpc.
+//       ... Trying to follow the same theme started in gs++ proto rpc calls
+
+service SlpRpc {
+    rpc TrustedValidation(TrustedValidationRequest) returns (TrustedValidationResponse) {}
+    // rpc GraphSearchValidation(GraphSearchRequest) returns (GraphSearchResponse) {} NOT IMPLEMENENTED
+    rpc PostTradeOrder(PostTradeOrderRequest) returns (PostTradeOrderResponse) {}
+}
+
+message TrustedValidationRequest {
+    message TrustedValidityQuery {
+        bytes prev_out_txid = 1;
+        uint32 prev_out_vout = 2;
+    }
+    repeated TrustedValidityQuery queries = 1;
+    bool include_slp_opreturn = 2;
+    bool include_oracle_response = 3;
+}
+
+message TrustedValidationResponse {
+    message ValidityResult {
+        bytes prev_out_txid = 1;
+        uint32 prev_out_vout = 2;
+        bool is_valid = 3;
+        enum SlpVersionType {
+            TYPE_1 = 0;
+            NFT1_GROUP = 1;
+            NFT1_CHILD = 2;
+        }
+        SlpVersionType slp_version = 4;
+        bytes slp_txn_opreturn = 5;
+        message OracleSignature {
+            enum OracleSignatureType {
+                SHA256_TXID_VOUT_ = 0;
+            }
+            OracleSignatureType type = 1;
+            bytes signature = 2;
+            bytes signed_message = 3;
+        }
+        OracleSignature oracle_sig = 6;
+    }
+
+    // allows server to respond to a request with multiple
+    repeated ValidityResult results = 1;
+}
+
+message PostTradeOrderRequest {
+    repeated SlpBuyOrderPost buy_orders = 1;
+    repeated SlpSellOrderPost sell_orders = 2;
+}
+
+message PostTradeOrderResponse {
+    // rpc response should return as an error if any of the submitted orders has a problem  
+}
+
+
+message SlpBuyOrderPost {
+    enum BuyOrderType {
+        V1_BUY_ORDER = 0;
+    }
+    BuyOrderType type = 1;
+    oneof buy_order {
+        SlpBuyV1 v1_buy_order = 2;
+        // allows for future trading types to be added...
+    }
+}
+
+message SlpBuyV1 {
+    bytes buy_script_template_version = 1;
+    bytes token_id = 2;
+    uint64 buy_quantity = 3;
+    uint64 buy_satoshis = 4;
+    message SlpValidator {
+        bytes public_key = 1;
+        string rpc_url = 2;   // if this is left out the oracle Url will need to be looked up on a key server
+    }
+    repeated SlpValidator slp_validators = 5;
+}
+
+message SlpSellOrderPost {
+    enum SellOrderType {
+        V1_SELL_ORDER = 0;
+    }
+    SellOrderType type = 1;
+    oneof sell_order {
+        SlpSellV1 v1_sell_order = 2;
+    }
+}
+
+message SlpSellV1 {
+    bytes token_id = 1;
+    bytes signature = 2;
+    bytes prev_out_txid = 3;
+}

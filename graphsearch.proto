@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.grpc.examples.graphsearch";
+option java_outer_classname = "GraphSearchProto";
+option objc_class_prefix = "GS";
+
+package graphsearch;
+
+service GraphSearchService {
+  rpc GraphSearch (GraphSearchRequest) returns (GraphSearchReply) {}
+  rpc TrustedValidation (TrustedValidationRequest) returns (TrustedValidationReply) {}
+  rpc OutputOracle (OutputOracleRequest) returns (OutputOracleReply) {}
+  rpc Status (StatusRequest) returns (StatusReply) {}
+}
+
+message GraphSearchRequest {
+    string txid = 1;
+    repeated string exclude_txids = 2;
+}
+
+message GraphSearchReply {
+    repeated bytes txdata = 1;
+}
+
+message TrustedValidationRequest {
+    string txid = 1;
+}
+
+message TrustedValidationReply {
+    bool valid = 1;
+}
+
+message OutputOracleRequest {
+    string txid = 1;
+    uint32 vout = 2;
+}
+
+message OutputOracleReply {
+    bytes msg = 1;
+    bytes sig = 2;
+    // TODO these are for debug, maybe remove later for next release?
+    bytes tx  = 3;
+    uint32 vout = 4;
+    bytes tokenid = 5;
+    uint32 tokentype = 6;
+    uint64 value = 7;
+    bool is_baton = 8;
+    bytes groupid = 9;
+}
+
+message StatusRequest {
+}
+
+message StatusReply {
+    uint32 block_height = 1;
+    string best_block_hash = 2;
+
+    uint64 last_incoming_zmq_tx_unix  = 3;
+    uint64 last_outgoing_zmq_tx_unix  = 4;
+    string last_incoming_zmq_tx       = 5;
+    string last_outgoing_zmq_tx       = 6;
+
+    uint64 last_incoming_zmq_blk_unix = 7;
+    uint64 last_outgoing_zmq_blk_unix = 8;
+    uint64 last_incoming_zmq_blk_size = 9;
+    uint64 last_outgoing_zmq_blk_size = 10;
+}
