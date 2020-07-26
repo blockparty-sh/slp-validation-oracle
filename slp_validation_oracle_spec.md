@@ -41,9 +41,9 @@ As an example for Token Type 1 Transactions:
 
 A client will forge a request to a validation oracle server by providing the server an outpoint.
 
-If the outpoint is a valid SLP UTXO return a signed message as described
+If the outpoint is SLP valid return a signed message as described
 
-If the outpoint is an invalid SLP UTXO the server may respond with an error or a 0 value response.
+If the outpoint is SLP invalid the server may respond with an error or a 0 value response.
 
 The server MUST conform to the below description of data and ordering for the message by tokenType.
 
